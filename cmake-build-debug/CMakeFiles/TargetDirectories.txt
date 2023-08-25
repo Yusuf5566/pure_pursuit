@@ -1,3 +1,0 @@
-/home/yuong/Desktop/project/tracking control/pure_pursuit/cmake-build-debug/CMakeFiles/pure.dir
-/home/yuong/Desktop/project/tracking control/pure_pursuit/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/yuong/Desktop/project/tracking control/pure_pursuit/cmake-build-debug/CMakeFiles/rebuild_cache.dir
