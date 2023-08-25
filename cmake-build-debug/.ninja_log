@@ -1,0 +1,35 @@
+# ninja log v5
+0	2	0	/home/yuong/Desktop/project/tracking control/pure_pursuit/cmake-build-debug/CMakeFiles/cmake.verify_globs	987c3f98f222c23c
+0	333	1692932950184711554	CMakeFiles/pure.dir/src/pure.cpp.o	122125c56fce7179
+0	343	1692932950192712911	CMakeFiles/pure.dir/src/main.cpp.o	a33ec770545b4e9b
+343	383	1692932950232719697	pure	9e8c1a221f65f097
+0	2	0	/home/yuong/Desktop/project/tracking control/pure_pursuit/cmake-build-debug/CMakeFiles/cmake.verify_globs	987c3f98f222c23c
+1	328	1692933097823194055	CMakeFiles/pure.dir/src/pure.cpp.o	122125c56fce7179
+328	366	1692933097863189624	pure	9e8c1a221f65f097
+0	2	0	/home/yuong/Desktop/project/tracking control/pure_pursuit/cmake-build-debug/CMakeFiles/cmake.verify_globs	987c3f98f222c23c
+0	2	0	/home/yuong/Desktop/project/tracking control/pure_pursuit/cmake-build-debug/CMakeFiles/cmake.verify_globs	987c3f98f222c23c
+0	327	1692933170921862619	CMakeFiles/pure.dir/src/pure.cpp.o	122125c56fce7179
+327	365	1692933170957861097	pure	9e8c1a221f65f097
+1	3	0	/home/yuong/Desktop/project/tracking control/pure_pursuit/cmake-build-debug/CMakeFiles/cmake.verify_globs	987c3f98f222c23c
+0	334	1692933222036512395	CMakeFiles/pure.dir/src/main.cpp.o	a33ec770545b4e9b
+334	371	1692933222072511943	pure	9e8c1a221f65f097
+0	2	0	/home/yuong/Desktop/project/tracking control/pure_pursuit/cmake-build-debug/CMakeFiles/cmake.verify_globs	987c3f98f222c23c
+0	2	0	/home/yuong/Desktop/project/tracking control/pure_pursuit/cmake-build-debug/CMakeFiles/cmake.verify_globs	987c3f98f222c23c
+0	334	1692933250720322768	CMakeFiles/pure.dir/src/main.cpp.o	a33ec770545b4e9b
+334	371	1692933250756322735	pure	9e8c1a221f65f097
+0	2	0	/home/yuong/Desktop/project/tracking control/pure_pursuit/cmake-build-debug/CMakeFiles/cmake.verify_globs	987c3f98f222c23c
+0	340	1692933302864718751	CMakeFiles/pure.dir/src/main.cpp.o	a33ec770545b4e9b
+340	379	1692933302904719347	pure	9e8c1a221f65f097
+0	2	0	/home/yuong/Desktop/project/tracking control/pure_pursuit/cmake-build-debug/CMakeFiles/cmake.verify_globs	987c3f98f222c23c
+0	334	1692933324561098687	CMakeFiles/pure.dir/src/main.cpp.o	a33ec770545b4e9b
+334	372	1692933324597099402	pure	9e8c1a221f65f097
+0	2	0	/home/yuong/Desktop/project/tracking control/pure_pursuit/cmake-build-debug/CMakeFiles/cmake.verify_globs	987c3f98f222c23c
+0	335	1692933362409986852	CMakeFiles/pure.dir/src/main.cpp.o	a33ec770545b4e9b
+335	373	1692933362449987921	pure	9e8c1a221f65f097
+0	2	0	/home/yuong/Desktop/project/tracking control/pure_pursuit/cmake-build-debug/CMakeFiles/cmake.verify_globs	987c3f98f222c23c
+1	3	0	/home/yuong/Desktop/project/tracking control/pure_pursuit/cmake-build-debug/CMakeFiles/cmake.verify_globs	987c3f98f222c23c
+0	336	1692933390158783018	CMakeFiles/pure.dir/src/main.cpp.o	a33ec770545b4e9b
+336	374	1692933390194784120	pure	9e8c1a221f65f097
+1	2	0	/home/yuong/Desktop/project/tracking control/pure_pursuit/cmake-build-debug/CMakeFiles/cmake.verify_globs	987c3f98f222c23c
+1	334	1692933465493376272	CMakeFiles/pure.dir/src/main.cpp.o	a33ec770545b4e9b
+334	372	1692933465529377626	pure	9e8c1a221f65f097

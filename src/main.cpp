@@ -30,20 +30,14 @@ int main()
         // 基于当前位姿信息计算下一步位姿信息
         Pose nextPose = controller.UpdatePose(currentPose, targetPoint.delta, v, dt);
         // 更新当前位姿信息
-        double epsilon = 1.0e-6;
-        if (path.back().x - nextPose.point.x < epsilon)
-        {
-            v = 0;
-            currentPose.heading = 0;
-        }
-        else { currentPose = nextPose; }
+         currentPose = nextPose;
 
         // 目标point
-        std::cout << "目标位置: (" << targetPoint.point.x << ", " << targetPoint.point.y
-                  << "), 前轮转角: " << targetPoint.delta << std::endl;
+        std::cout << "target point: (" << targetPoint.point.x << ", " << targetPoint.point.y
+                  << "), front wheel : " << targetPoint.delta << std::endl;
         // 打印下一步位姿信息
-        std::cout << "下一步位置: (" << nextPose.point.x << ", " << nextPose.point.y
-                  << "), 航向角: " << nextPose.heading << std::endl;
+        std::cout << "next point: (" << nextPose.point.x << ", " << nextPose.point.y
+                  << "), steering radius: " << nextPose.heading << std::endl;
         std::cout << std::endl;
     }
     return 0;

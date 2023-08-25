@@ -35,7 +35,6 @@ ControlCommand PurePursuitController::calculateControl(const Pose &currentPos)
 {
     double closestDistance = std::numeric_limits<double>::max();
     int closestIndex = 0;
-    int nextIndex = 0;
 
     // Find the closest point on the path
     for (size_t i = 0; i < path_.size(); i++)
@@ -47,9 +46,8 @@ ControlCommand PurePursuitController::calculateControl(const Pose &currentPos)
             closestIndex = i;
         }
     }
-    std::cout << "closetIndex=" << closestIndex << std::endl;
-    Point target;
 
+    Point target;
     // Find the point on the path that is look ahead distance away
     //    double epsilon = 1.0e-6;
     if (path_.back().x - currentPos.point.x < lookAheadDistance)
@@ -59,26 +57,20 @@ ControlCommand PurePursuitController::calculateControl(const Pose &currentPos)
     }
     else
     {
-        double remainingDistance = 0;
         for (size_t i = closestIndex + 1; i < path_.size() - 1; i++)
         {
             //              double segmentLength = std::hypot(path_[i+1].x - path_[i].x, path_[i+1].y - path_[i].y);
-            remainingDistance = std::hypot(path_[i].x - currentPos.point.x, path_[i].y - currentPos.point.y);
+            double remainingDistance = std::hypot(path_[i].x - currentPos.point.x, path_[i].y - currentPos.point.y);
 
             if (remainingDistance > lookAheadDistance)
             {
-                //            double ratio = lookAheadDistance / remainingDistance;
-                //            target.x = path_[i].x + ratio * (path_[i + 1].x - path_[i].x);
-                //            target.y = path_[i].y + ratio * (path_[i + 1].y - path_[i].y);
-                nextIndex = i;
-                target.x = path_[i].x;
-                target.y = path_[i].y;
+                double ratio = lookAheadDistance / remainingDistance;
+                target.x = path_[i].x + ratio * (path_[i + 1].x - path_[i].x);
+                target.y = path_[i].y + ratio * (path_[i + 1].y - path_[i].y);
                 break;
             }
         }
-        std::cout << "remainingDistance=" << remainingDistance << std::endl;
     }
-    std::cout << "nextIndex=" << nextIndex << std::endl;
 
     ControlCommand command;
     Point matrix_T{target.x - currentPos.point.x, target.y - currentPos.point.y};

@@ -1,0 +1,51 @@
+Performing C SOURCE FILE Test CMAKE_HAVE_LIBC_PTHREAD failed with the following output:
+Change Dir: /home/yuong/Desktop/project/tracking control/pure_pursuit/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-aoPhro
+
+Run Build Command(s):/home/yuong/my_soft/clion-2023.1.4/bin/ninja/linux/x64/ninja cmTC_04f07 && [1/2] Building C object CMakeFiles/cmTC_04f07.dir/src.c.o
+[2/2] Linking C executable cmTC_04f07
+FAILED: cmTC_04f07 
+: && /usr/bin/cc   CMakeFiles/cmTC_04f07.dir/src.c.o -o cmTC_04f07   && :
+/usr/bin/ld: CMakeFiles/cmTC_04f07.dir/src.c.o: in function `main':
+src.c:(.text+0x46): undefined reference to `pthread_create'
+/usr/bin/ld: src.c:(.text+0x52): undefined reference to `pthread_detach'
+/usr/bin/ld: src.c:(.text+0x5e): undefined reference to `pthread_cancel'
+/usr/bin/ld: src.c:(.text+0x6f): undefined reference to `pthread_join'
+collect2: error: ld returned 1 exit status
+ninja: build stopped: subcommand failed.
+
+
+Source file was:
+#include <pthread.h>
+
+static void* test_func(void* data)
+{
+  return data;
+}
+
+int main(void)
+{
+  pthread_t thread;
+  pthread_create(&thread, NULL, test_func, NULL);
+  pthread_detach(thread);
+  pthread_cancel(thread);
+  pthread_join(thread, NULL);
+  pthread_atfork(NULL, NULL, NULL);
+  pthread_exit(NULL);
+
+  return 0;
+}
+
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/yuong/Desktop/project/tracking control/pure_pursuit/cmake-build-debug/CMakeFiles/CMakeScratch/TryCompile-GyIJ0o
+
+Run Build Command(s):/home/yuong/my_soft/clion-2023.1.4/bin/ninja/linux/x64/ninja cmTC_3c12e && [1/2] Building C object CMakeFiles/cmTC_3c12e.dir/CheckFunctionExists.c.o
+[2/2] Linking C executable cmTC_3c12e
+FAILED: cmTC_3c12e 
+: && /usr/bin/cc -DCHECK_FUNCTION_EXISTS=pthread_create  CMakeFiles/cmTC_3c12e.dir/CheckFunctionExists.c.o -o cmTC_3c12e  -lpthreads && :
+/usr/bin/ld: cannot find -lpthreads
+collect2: error: ld returned 1 exit status
+ninja: build stopped: subcommand failed.
+
+
+
