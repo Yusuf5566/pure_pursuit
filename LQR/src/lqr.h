@@ -22,27 +22,27 @@ public:
     void SolveLQRProblem(const Eigen::MatrixXd &A, const Eigen::MatrixXd &B, const Eigen::MatrixXd &Q,
         const Eigen::MatrixXd &R, const Eigen::MatrixXd &M, const double tolerance, const uint max_num_iteration,
         Eigen::MatrixXd *ptr_K);
-    // 通过运动学来进行计算
+    // kinematic
     void Kinematic(double v , double phi ,double dt ,double delta);
-    // 通过动力学来计算
+    // dynamic
     void Dynamic();
-    // 计算参考点
+    // reference
     MatrixXd reference(const MatrixXd &state);
-    // 更新车辆状态
+    // Update state
     MatrixXd updateState(const Vector3d &state, double& v, double delta, double dt,MatrixXd &control);
-    // LQR 控制器计算
+    // LQR control
     MatrixXd computeControl(const MatrixXd &state, const MatrixXd &reference);
 
 private:
-    Matrix<double, 3, 3> A;  // 系统动态矩阵
-    Matrix<double, 3, 2> B;  // 控制矩阵
-    Matrix<double, 3, 3> Q;  // LQR权重矩阵 (状态误差)
-    Matrix<double, 2, 2> R;  // LQR权重矩阵 (控制输入)
+    Matrix<double, 3, 3> A;  // state matrix
+    Matrix<double, 3, 2> B;  // control matrix
+    Matrix<double, 3, 3> Q;  // Q matrix
+    Matrix<double, 2, 2> R;  // R matrix
     Matrix3d P;
     Matrix<double, 2, 3> K;
     std::vector<Vector3d> path_;
     double lookAheadDistance = 1;
-    double L_;                // 车轮间的距离
+    double L_;                // wheel base
 
 };
 

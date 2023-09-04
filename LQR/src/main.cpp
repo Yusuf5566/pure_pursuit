@@ -44,10 +44,10 @@ int main()
         path[i](2) = 0.1 * cos(count);
         count = count + 0.1;
     }
-    double v = 2.0;        // 初始速度
-    double dt = 0.4;       // 步长
-    double L = 2.5;        // 轴距
-    double delta = 0.0;    // 前轮转角
+    double v = 2.0;        // init velocity
+    double dt = 0.4;       // step
+    double L = 2.5;        // wheel base
+    double delta = 0.0;    // front wheel turning angle
     Matrix<double, 3, 1> state;
     state << 0, 0.5, 0.1;  // init state
 
@@ -66,12 +66,12 @@ int main()
             //            break;
         }
         state_container.push_back(state);
-        // 计算目标位置
+        // target site
         reference = controller.reference(state);
         Matrix<double, 2, 1> control_input = controller.computeControl(state, reference);
-        // 这里输出的控制量是增量，因此前轮转角delta有个累加的过程
         MatrixXd input = control_input;
         state = controller.updateState(state, v, delta, dt, input);
+        // 输出的控制量是增量，因此前轮转角delta有个累加的过程
         delta += control_input(1);
         std::cout << "Step " << i << ": x=" << state(0) << " y=" << state(1) << " phi=" << state(2) << std::endl;
     }

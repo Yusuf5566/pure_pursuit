@@ -1,14 +1,13 @@
 #include "lqr.h"
 
-LqrController::LqrController( double L, std::vector<Vector3d> path)
+LqrController::LqrController(double L, std::vector<Vector3d> path)
 {
     this->path_ = path;
     this->L_ = L;
 }
 
-void LqrController::Kinematic(double v , double phi ,double dt ,double delta)
+void LqrController::Kinematic(double v, double phi, double dt, double delta)
 {
-    double deltal = 0.0;
     A << 1, 0, -dt * v * sin(phi), 0, 1, dt * v * cos(phi), 0, 0, 1;
 
     B << dt * cos(phi), 0, dt * sin(phi), 0, dt * (tan(phi) / L_), dt * (v / (L_ * pow(cos(delta), 2)));
@@ -20,7 +19,6 @@ void LqrController::Kinematic(double v , double phi ,double dt ,double delta)
 
 void LqrController::Dynamic() {}
 
-// 计算参考点
 MatrixXd LqrController::reference(const Eigen::MatrixXd &state)
 {
     double closestDistance = std::numeric_limits<double>::max();
@@ -62,14 +60,12 @@ MatrixXd LqrController::reference(const Eigen::MatrixXd &state)
 
 MatrixXd LqrController::computeControl(const MatrixXd &state, const MatrixXd &reference)
 {
-    // 计算误差
     MatrixXd error = state - reference;
-    //    std::cout<<"error:"<<error<<std::endl;
 
-    // LQR 控制器增益矩阵
+    // LQR Gain matrix
     MatrixXd *K;
     SolveLQRProblem(A, B, Q, R, error(1), 10, K);
-    // 计算控制输入
+    // control input
     MatrixXd control = -*K * error;
 
     return control;
@@ -78,8 +74,8 @@ MatrixXd LqrController::computeControl(const MatrixXd &state, const MatrixXd &re
 // 这里的delta是所有控制量的累加和,delta有正负，所以外面应该有一个记录delta的变量
 MatrixXd LqrController::updateState(const Vector3d &state, double &v, double delta, double dt, MatrixXd &control)
 {
-    delta = std::clamp(delta, -M_PI_4, M_PI_4);  // 前轮转角最大为pi/4
-    v = std::min(v, 5.0);                        // 限制最大速度为5m/s
+    delta = std::clamp(delta, -M_PI_4, M_PI_4);  // max front wheel turning angle pi/4
+    v = std::min(v, 5.0);                        //  max velocity 5m/s
 
     Matrix<double, 3, 1> newState;
     newState(0) = state(0) + v * cos(state(2)) * dt + (1 / 2) * control(0) * dt * dt * cos(state(2));
@@ -87,7 +83,7 @@ MatrixXd LqrController::updateState(const Vector3d &state, double &v, double del
     newState(2) = (tan(delta) / L_) * dt + (v * dt * control(1)) / L_;
     v = control(0) * dt;
 
-    Kinematic(v,newState(2),dt,delta);
+    Kinematic(v, newState(2), dt, delta);
 
     return newState;
 }
