@@ -1,21 +1,19 @@
 #include "lqr.h"
 
-LqrController::LqrController(double dt, double L, double v_desired, std::vector<Vector3d> path)
+LqrController::LqrController( double L, std::vector<Vector3d> path)
 {
-    this->L_ = L;
     this->path_ = path;
-    this->t_ = dt;
-    this->v_ = v_desired;
+    this->L_ = L;
 }
 
-void LqrController::Kinematic()
+void LqrController::Kinematic(double v , double phi ,double dt ,double delta)
 {
-    double delta = 0.0;
-    A << 1, 0, -t_ * v_ * sin(delta), 0, 1, t_ * v_ * cos(delta), 0, 0, 1;
+    double deltal = 0.0;
+    A << 1, 0, -dt * v * sin(phi), 0, 1, dt * v * cos(phi), 0, 0, 1;
 
-    B << t_ * cos(delta), 0, t_ * sin(delta), 0, t_ * (tan(delta) / L_), t_ * (v_ / (L_ * pow(cos(delta), 2)));
+    B << dt * cos(phi), 0, dt * sin(phi), 0, dt * (tan(phi) / L_), dt * (v / (L_ * pow(cos(delta), 2)));
 
-    Q << 100, 0, 0, 0, 100, 0, 0, 0, 100;
+    Q << 10, 0, 0, 0, 100, 0, 0, 0, 10;
 
     R << 10, 0, 0, 10;
 }
@@ -80,15 +78,16 @@ MatrixXd LqrController::computeControl(const MatrixXd &state, const MatrixXd &re
 // 这里的delta是所有控制量的累加和,delta有正负，所以外面应该有一个记录delta的变量
 MatrixXd LqrController::updateState(const Vector3d &state, double &v, double delta, double dt, MatrixXd &control)
 {
-
-    delta = std::clamp(delta, -M_PI_4, M_PI_4);   // 前轮转角最大为pi/4
-    v = std::min(v, 5.0);   // 限制最大速度为5m/s
+    delta = std::clamp(delta, -M_PI_4, M_PI_4);  // 前轮转角最大为pi/4
+    v = std::min(v, 5.0);                        // 限制最大速度为5m/s
 
     Matrix<double, 3, 1> newState;
     newState(0) = state(0) + v * cos(state(2)) * dt + (1 / 2) * control(0) * dt * dt * cos(state(2));
     newState(1) = state(1) + v * sin(state(2)) * dt + (1 / 2) * control(0) * dt * dt * sin(state(2));
     newState(2) = (tan(delta) / L_) * dt + (v * dt * control(1)) / L_;
     v = control(0) * dt;
+
+    Kinematic(v,newState(2),dt,delta);
 
     return newState;
 }
@@ -130,15 +129,17 @@ void LqrController::SolveLQRProblem(const MatrixXd &A, const MatrixXd &B, const 
         //        std::cout<<"p="<<P<<std::endl;
     }
 
-//    if (num_iteration >= max_num_iteration)
-//    {
-//        std::cout << "LQR solver cannot converge to a solution,last consecutive result diff is:" << diff << std::endl;
-//    }
-//    else
-//    {
-//        std::cout << "LQR solver converged at iteration:" << num_iteration << "max consecutive result diff.:" << diff
-//                  << std::endl;
-//    }
+    //    if (num_iteration >= max_num_iteration)
+    //    {
+    //        std::cout << "LQR solver cannot converge to a solution,last consecutive result diff is:" << diff <<
+    //        std::endl;
+    //    }
+    //    else
+    //    {
+    //        std::cout << "LQR solver converged at iteration:" << num_iteration << "max consecutive result diff.:" <<
+    //        diff
+    //                  << std::endl;
+    //    }
     // transpose()矩阵的转置T，inverse()逆矩阵
     *ptr_K = (R + BT * P * B).inverse() * (BT * P * A + MT);
 }

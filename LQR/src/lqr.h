@@ -15,7 +15,7 @@ using namespace Eigen;
 class LqrController
 {
 public:
-    LqrController(double dt, double L, double v_desired,std::vector<Vector3d> path);
+    LqrController( double L,std::vector<Vector3d> path);
     void SolveLQRProblem(const Eigen::MatrixXd &A, const Eigen::MatrixXd &B, const Eigen::MatrixXd &Q,
         const Eigen::MatrixXd &R, const double tolerance, const uint max_num_iteration, Eigen::MatrixXd *ptr_K);
 
@@ -23,7 +23,7 @@ public:
         const Eigen::MatrixXd &R, const Eigen::MatrixXd &M, const double tolerance, const uint max_num_iteration,
         Eigen::MatrixXd *ptr_K);
     // 通过运动学来进行计算
-    void Kinematic();
+    void Kinematic(double v , double phi ,double dt ,double delta);
     // 通过动力学来计算
     void Dynamic();
     // 计算参考点
@@ -41,10 +41,8 @@ private:
     Matrix3d P;
     Matrix<double, 2, 3> K;
     std::vector<Vector3d> path_;
-    double lookAheadDistance = 2;
-    double v_;
+    double lookAheadDistance = 1;
     double L_;                // 车轮间的距离
-    double t_;
 
 };
 
