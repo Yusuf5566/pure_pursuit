@@ -4,32 +4,32 @@
 
 #ifndef LQR_LQR_H
 #define LQR_LQR_H
-#include <Eigen/Dense>
-#include <cmath>
 #include <eigen3/Eigen/Core>
 #include <iostream>
 #include <vector>
+#include "vehicle.h"
 
 using namespace Eigen;
 
 class LqrController
 {
 public:
-    LqrController( double L,std::vector<Vector3d> path);
+    LqrController(std::vector<Vector3d> path);
     void SolveLQRProblem(const Eigen::MatrixXd &A, const Eigen::MatrixXd &B, const Eigen::MatrixXd &Q,
         const Eigen::MatrixXd &R, const double tolerance, const uint max_num_iteration, Eigen::MatrixXd *ptr_K);
 
     void SolveLQRProblem(const Eigen::MatrixXd &A, const Eigen::MatrixXd &B, const Eigen::MatrixXd &Q,
         const Eigen::MatrixXd &R, const Eigen::MatrixXd &M, const double tolerance, const uint max_num_iteration,
         Eigen::MatrixXd *ptr_K);
+
     // kinematic
-    void Kinematic(double v , double phi ,double dt ,double delta);
+    void Kinematic(Vehicle& vehicle);
     // dynamic
     void Dynamic();
     // reference
     MatrixXd reference(const MatrixXd &state);
     // Update state
-    MatrixXd updateState(const Vector3d &state, double& v, double delta, double dt,MatrixXd &control);
+    bool updateState(Vehicle& vehicle,MatrixXd& control);
     // LQR control
     MatrixXd computeControl(const MatrixXd &state, const MatrixXd &reference);
 
@@ -42,8 +42,8 @@ private:
     Matrix<double, 2, 3> K;
     std::vector<Vector3d> path_;
     double lookAheadDistance = 1;
-    double L_;                // wheel base
-
+    Vehicle vehicle_;
+    double dt_ = 0.1;
 };
 
 #endif  // LQR_LQR_H
