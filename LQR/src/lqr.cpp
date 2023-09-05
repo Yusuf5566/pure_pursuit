@@ -1,16 +1,16 @@
 #include "lqr.h"
 
-LqrController::LqrController(double L, std::vector<Vector3d> path)
-{
-    this->path_ = path;
-    this->L_ = L;
-}
+LqrController::LqrController(std::vector<Vector3d> path) { this->path_ = path; }
 
-void LqrController::Kinematic(double v, double phi, double dt, double delta)
+void LqrController::Kinematic(Vehicle &vehicle)
 {
-    A << 1, 0, -dt * v * sin(phi), 0, 1, dt * v * cos(phi), 0, 0, 1;
+    vehicle_ = vehicle;
+    double phi = vehicle_.state(2);
 
-    B << dt * cos(phi), 0, dt * sin(phi), 0, dt * (tan(phi) / L_), dt * (v / (L_ * pow(cos(delta), 2)));
+    A << 1, 0, -dt_ * vehicle_.v * sin(phi), 0, 1, dt_ * vehicle_.v * cos(phi), 0, 0, 1;
+
+    B << dt_ * cos(phi), 0, dt_ * sin(phi), 0, dt_ * (tan(phi) / vehicle_.L),
+        dt_ * (vehicle_.v / (vehicle_.L * pow(cos(vehicle_.delta), 2)));
 
     Q << 10, 0, 0, 0, 100, 0, 0, 0, 10;
 
@@ -54,14 +54,12 @@ MatrixXd LqrController::reference(const Eigen::MatrixXd &state)
             }
         }
     }
-
     return reference;
 }
 
 MatrixXd LqrController::computeControl(const MatrixXd &state, const MatrixXd &reference)
 {
     MatrixXd error = state - reference;
-
     // LQR Gain matrix
     MatrixXd *K;
     SolveLQRProblem(A, B, Q, R, error(1), 10, K);
@@ -71,21 +69,29 @@ MatrixXd LqrController::computeControl(const MatrixXd &state, const MatrixXd &re
     return control;
 }
 
-// 这里的delta是所有控制量的累加和,delta有正负，所以外面应该有一个记录delta的变量
-MatrixXd LqrController::updateState(const Vector3d &state, double &v, double delta, double dt, MatrixXd &control)
+bool LqrController::updateState(Vehicle &vehicle, MatrixXd &control)
 {
-    delta = std::clamp(delta, -M_PI_4, M_PI_4);  // max front wheel turning angle pi/4
-    v = std::min(v, 5.0);                        //  max velocity 5m/s
+    double epsilon = 1.0e-6;
+    if (vehicle.v < epsilon)
+    {
+        std::cout << "stop state!" << std::endl;
+        return false;
+    }
 
+    vehicle.v = std::min(vehicle.v, 5.0);  //  max velocity 5m/s
     Matrix<double, 3, 1> newState;
-    newState(0) = state(0) + v * cos(state(2)) * dt + (1 / 2) * control(0) * dt * dt * cos(state(2));
-    newState(1) = state(1) + v * sin(state(2)) * dt + (1 / 2) * control(0) * dt * dt * sin(state(2));
-    newState(2) = (tan(delta) / L_) * dt + (v * dt * control(1)) / L_;
-    v = control(0) * dt;
+    newState(0) = vehicle_.state(0) + vehicle_.v * cos(vehicle_.state(2)) * dt_ +
+                  (1 / 2) * control(0) * dt_ * dt_ * cos(vehicle_.state(2));
+    newState(1) = vehicle_.state(1) + vehicle_.v * sin(vehicle_.state(2)) * dt_ +
+                  (1 / 2) * control(0) * dt_ * dt_ * sin(vehicle_.state(2));
+    newState(2) = (tan(vehicle_.delta) / vehicle_.L) * dt_ + (vehicle_.v * dt_ * control(1)) / vehicle_.L;
 
-    Kinematic(v, newState(2), dt, delta);
+    // 输出的控制量是增量，因此前轮转角delta有个累加的过程
+    vehicle.delta = std::clamp(vehicle.delta + control(1), -M_PI_4, M_PI_4);  // max front wheel turning angle pi/4
+    vehicle.state = newState;
 
-    return newState;
+    Kinematic(vehicle);
+    return true;
 }
 
 // tolerance表示迭代误差 ， max_num_iteration迭代步长N ， ptr_K 增益矩阵K
@@ -125,17 +131,6 @@ void LqrController::SolveLQRProblem(const MatrixXd &A, const MatrixXd &B, const 
         //        std::cout<<"p="<<P<<std::endl;
     }
 
-    //    if (num_iteration >= max_num_iteration)
-    //    {
-    //        std::cout << "LQR solver cannot converge to a solution,last consecutive result diff is:" << diff <<
-    //        std::endl;
-    //    }
-    //    else
-    //    {
-    //        std::cout << "LQR solver converged at iteration:" << num_iteration << "max consecutive result diff.:" <<
-    //        diff
-    //                  << std::endl;
-    //    }
     // transpose()矩阵的转置T，inverse()逆矩阵
     *ptr_K = (R + BT * P * B).inverse() * (BT * P * A + MT);
 }
