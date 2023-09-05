@@ -33,12 +33,10 @@ file(GLOB_RECURSE SRC_LIST
 # 将文件加入到工程依赖
 target_sources(${PROJECT_NAME} PRIVATE ${SRC_LIST})
 
-# Threads
-find_package(Threads REQUIRED)
-target_include_directories(${PROJECT_NAME} PRIVATE ${Threads_INCLUDES})
-target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
-
 #Eigen
 find_package(Eigen3 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
 
+#Python
+find_package(Python3 COMPONENTS Development NumPy)
+target_link_libraries(${PROJECT_NAME} Python3::Python Python3::NumPy)
